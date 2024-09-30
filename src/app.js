@@ -2,15 +2,16 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
-
+app.use(express.json());
 app.post("/signup", async (req, res) => {
-  const userObj = {
-    firstName: "Imran",
-    lastName: "Ali",
-    emailId: "imranali.code@gmail.com",
-    password: "code0090",
-  };
-  const user = new User(userObj);
+  //console.log(req.body);
+  // const userObj = {
+  //   firstName: "MS",
+  //   lastName: "Dhoni",
+  //   emailId: "msdhoni123@gmail.com",
+  //   password: "code00ff90",
+  // };
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("User added sucessfully!");
@@ -31,3 +32,4 @@ connectDB()
   });
 //  mongodb+srv://imran_1:<db_password>@cluster0.wvgimil.mongodb.net/
 //  mongodb+srv://imran_1:<db_password>@cluster0.wvgimil.mongodb.net/
+//mongodb+srv://imran_1:eh8PvvMOher8pqX9@cluster0.wvgimil.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0 //8BeDssmQmMJYzOhW
