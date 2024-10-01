@@ -2,21 +2,50 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const bcrypt = require("bcrypt");
+const { validateSignUpData } = require("./utils/validation");
 app.use(express.json());
 app.post("/signup", async (req, res) => {
-  //console.log(req.body);
-  // const userObj = {
-  //   firstName: "MS",
-  //   lastName: "Dhoni",
-  //   emailId: "msdhoni123@gmail.com",
-  //   password: "code00ff90",
-  // };
-  const user = new User(req.body);
   try {
+    //Validation of data
+    validateSignUpData(req);
+    const { firstName, lastName, emailId, password } = req.body;
+    //Encrypt the password
+    //const { password } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log(passwordHash);
+    //Creating a new instance of user model
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
+
     await user.save();
     res.send("User added sucessfully!");
   } catch (err) {
-    res.status(400).send("Error saving the user: " + err.message);
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+    console.log(user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (isPasswordValid) {
+      res.send("Login successful!!!");
+    } else {
+      throw new Error("Password Invalid credentials");
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong " + err.message);
   }
 });
 // get user by email
@@ -90,6 +119,7 @@ app.delete("/user", async (req, res) => {
     res.status(400).send("Not able to find the user by id");
   }
 });
+
 connectDB()
   .then(() => {
     console.log("Database connection established...");
