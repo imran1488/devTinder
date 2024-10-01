@@ -57,6 +57,7 @@ app.patch("/user/:userId", async (req, res) => {
       "age",
       "skills",
       "lastName",
+      "password",
     ];
     //console.log(data);
     const isUpdateAllowed = Object.keys(data).every((k) => {
