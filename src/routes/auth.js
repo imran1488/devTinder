@@ -36,20 +36,14 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
     console.log(user.password);
-    //const isPasswordValid = await bcrypt.compare(password, user.password);
     const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
-      //Create JWT Token
-      // const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790", {
-      //   expiresIn: "1d",
-      // });
       const token = await user.getJWT();
       console.log(token);
-      //Add the token to cookie and send the response back to user
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
       });
-      res.send("Login successful!!!");
+      res.send(user);
     } else {
       throw new Error("Password Invalid credentials");
     }
