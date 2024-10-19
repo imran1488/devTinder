@@ -5,7 +5,7 @@ const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const { connect } = require("mongoose");
 //Get all the pending connection request for thte loggedIn User
-const USER_SAFE_DATA = "firstName lastName photoUrl about skills";
+const USER_SAFE_DATA = "firstName lastName photoUrl about skills age gender";
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
